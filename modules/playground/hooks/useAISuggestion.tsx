@@ -62,7 +62,7 @@ export const useAISuggestions = ():UseAISuggestionsReturn => {
                         suggestionType: type
                     }
 
-                    const response = await fetch("/api/code-suggestions", {
+                    const response = await fetch("/api/code-completion", {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
                         body: JSON.stringify(payload)
@@ -75,13 +75,26 @@ export const useAISuggestions = ():UseAISuggestionsReturn => {
                     const data = await response.json();
 
                     if(data.suggestion) {
+
+                        console.log("AI RESPONSE", {
+                            originalPosition: {
+                                line: cursorPostion.lineNumber,
+                                column: cursorPostion.column,
+                            },
+                            currentPosition: editor.getPosition(),
+                        });
+
                         const suggestionText = data.suggestion.trim();
+
+                        // Get CURRENT cursor position when AI response arrives
+                        const currentPos = editor.getPosition();
+
                         setState((prev)=>({
                             ...prev,
                             suggestion: suggestionText,
                             position: {
-                                line: cursorPostion.lineNumber,
-                                column: cursorPostion.column
+                                line: currentPos.lineNumber,
+                                column: currentPos.column
                             },
                             isLoading: false
                         }))

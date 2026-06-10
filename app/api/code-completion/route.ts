@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         const { fileContent , cursorLine , cursorColumn , suggestionType , fileName } = body
 
         // validate input
-        if(!fileContent || cursorLine < 0 || cursorColumn > 0 || !suggestionType){
+        if(!fileContent || cursorLine < 0 || cursorColumn < 0 || !suggestionType){
             return NextResponse.json({ error: "Invalid input parameters" }, {status : 400})
         }
 
@@ -129,7 +129,7 @@ async function generateSuggestion(prompt: string): Promise<string> {
             method: "POST",
             headers: {'Content-Type': "application/json"},
             body: JSON.stringify({
-                model: "gpt-oss:20b",
+                model: "codellama:latest",
                 prompt,
                 stream: false,
                 options: {
@@ -140,6 +140,9 @@ async function generateSuggestion(prompt: string): Promise<string> {
         });
 
         if(!response.ok) {
+          const errorText = await response.text();
+
+    console.error("OLLAMA ERROR:", errorText);
             throw new Error(`AI service error: ${response.statusText}`);
         }
 
