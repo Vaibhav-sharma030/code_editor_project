@@ -190,8 +190,8 @@ const MainPlaygroundPage = () => {
           }
         }
 
-        const newTemplateData = await saveTemplateData(updatedTemplateData);
-        setTemplateData(newTemplateData || updatedTemplateData);
+        await saveTemplateData(updatedTemplateData);
+        setTemplateData(updatedTemplateData);
 
         // update open files
         const updatedOpenFiles = openFiles.map((f) => 
